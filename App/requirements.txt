@@ -1,0 +1,16 @@
+django
+requests
+django-cors-headers
+beautifulsoup4
+tld
+fuzzywuzzy
+channels
+watchdog
+asgiref
+daphne
+gevent
+tldextract
+argparse
+colorama
+future
+PySocks

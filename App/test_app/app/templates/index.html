@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <div>
+            <pre>document.writeln(new URL(window.location.href).searchParams.get("a"))</pre>
+            <script>document.writeln(new URL(window.location.href).searchParams.get("a"))</script>
+        </div>
+        <div>
+            <pre>document.write(new URLSearchParams(window.location.search).get("b"))</pre>
+            <script>document.write(new URLSearchParams(window.location.search).get("b"))</script>
+        </div>
+        <div>
+            <pre>eval(new URLSearchParams(window.location.search).get("c") || "")</pre>
+            <script>eval(new URLSearchParams(window.location.search).get("c") || "")</script>
+        </div>
+        <div>
+            <div id="xss-d"></div>
+            <pre>document.querySelector("#xss-d").innerHTML = new URLSearchParams(window.location.search).get("d")</pre>
+            <script>document.querySelector("#xss-d").innerHTML = new URLSearchParams(window.location.search).get("d")</script>
+        </div>
+
+        <form >
+          <label for="inputField">Enter your name:</label>
+          <input type="text" id="inputField" />
+          <button onclick="submitForm()">Submit</button>
+        </form>
+        <br>
+        <form>
+          <label for="searchQuery">Search:</label>
+          <input type="text" id="searchQuery" />
+          <button onclick="redirectWithQuery()">Search</button>
+        </form>
+        <br>
+        <form method="POST" action="/query">
+          <label for="inputField_">Enter your user name:</label>
+          <input name="user_name" type="text" id="inputField_" />
+          <button >Submit</button>
+        </form>
+        <br>
+        {% if users %}
+            {% for user in users %}
+                <p>Hello, {{user.user_name}}</p>
+            {% endfor %}
+        {% endif %}
+    </body>
+
+<script>
+  function redirectWithQuery() {
+    var userInput = document.getElementById('searchQuery').value;
+    // Redirect to a search page with the user's input as a parameter
+    window.location.href = `/search?query=${userInput}`;
+  }
+</script>
+<script>
+  function submitForm() {
+      var userInput = document.getElementById('inputField').value;document.write('<p>Hello, ' + userInput + '!</p>');
+  }
+</script>
+</html>

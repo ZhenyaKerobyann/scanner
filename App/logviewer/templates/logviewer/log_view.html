@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Logs</title>
+</head>
+<body>
+    <h1>Submit a URL</h1>
+    <form id="urlForm">
+        <label for="url">Enter URL:</label>
+        <input type="url" id="url" name="url" placeholder="https://example.com" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Response:</h2>
+    <pre id="responseOutput"></pre>
+
+    <script>
+        document.getElementById('urlForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the form from submitting the traditional way
+
+            const urlInput = document.getElementById('url').value;
+            const responseOutput = document.getElementById('responseOutput');
+
+            // Clear previous response
+            responseOutput.textContent = '';
+
+            // Use fetch API to send the URL via POST request
+            fetch('/logs/scan/cors/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',  // Form URL encoding
+                    'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token if needed
+                },
+                body: new URLSearchParams({
+                    'url': urlInput
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the JSON response in a formatted way
+                responseOutput.textContent = JSON.stringify(data, null, 4);
+            })
+            .catch(error => {
+                responseOutput.textContent = 'An error occurred: ' + error;
+            });
+        });
+    </script>
+    <h1>Real-Time Logs</h1>
+    <div id="log-data"></div>
+
+    <script>
+        const logDiv = document.getElementById('log-data');
+        const socket = new WebSocket('ws://' + window.location.host + '/ws/logs/');
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const logMessage = document.createElement('p');
+            logMessage.textContent = data.message;
+            logDiv.appendChild(logMessage);
+        };
+
+        socket.onclose = function(e) {
+            console.error('Socket closed unexpectedly');
+        };
+    </script>
+</body>
+</html>

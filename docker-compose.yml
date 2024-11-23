@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  scanner:
+    build: ./App
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+
+  scanner-front:
+    build: ./scanner-front
+    command: npm run preview -- --host 0.0.0.0
+    ports:
+      - "4173:4173"
